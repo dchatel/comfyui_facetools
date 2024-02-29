@@ -46,4 +46,5 @@ These custom nodes provide a rotation aware face extraction, paste back, and var
   - I made some changes in `FaceDetailer` and `WarpFacesBack` since I've created this one, so it probably doesn't work anymore. Needs more testing and more work.
 
 ## Installation
-You will need [ComfyUI-Impact-Pack](https://github.com/ltdrdata/) for `Load InsightFace` node and [comfyui_controlnet_aux](https://github.com/Fannovel16/comfyui_controlnet_aux) for MediaPipe library (which is required for convex_hull masks) and `MediaPipe Face Mesh` node if you want to use that controlnet
+You will need [ComfyUI-Impact-Pack](https://github.com/ltdrdata/) for `Load InsightFace` node and [comfyui_controlnet_aux](https://github.com/Fannovel16/comfyui_controlnet_aux) for MediaPipe library (which is required for convex_hull masks) and `MediaPipe Face Mesh` node if you want to use that controlnet.
+You will also need to download the [BiSeNet model](https://drive.google.com/open?id=154JgKpzCPW82qINcVieuPH3fZ2e0P812) and save it in `ComfyUI/models/bisenet` to use occlusion aware masks.
