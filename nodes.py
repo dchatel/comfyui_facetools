@@ -166,7 +166,7 @@ class WarpFaceBack:
                                 for single_warp, single_mask in zip(warp, mask)]
                 full_mask = np.add.reduce(warped_masks, axis=0)[...,None]
                 swapped = np.add.reduce([
-                    cv2.warpAffine(single_crop.numpy(),
+                    cv2.warpAffine(single_crop.cpu().numpy(),
                                 cv2.invertAffineTransform(single_warp),
                                 image.shape[1::-1]
                                 ) * single_mask[..., None]
