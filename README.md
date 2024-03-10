@@ -4,6 +4,9 @@ These custom nodes provide a rotation aware face extraction, paste back, and var
 
 ![Comparison](examples/comparison.jpg)
 
+## Patch notes
+- 2024-03-10 - Added nodes to detect faces using `face_yolov8m` instead of `insightface`.
+
 ## Example Workflows
 - Full inpainting workflow with two controlnets which allows to get as high as 1.0 denoise strength without messing things up.
 ![Full Inpainting](examples/full_inpainting.png)
@@ -46,5 +49,8 @@ These custom nodes provide a rotation aware face extraction, paste back, and var
   - I made some changes in `FaceDetailer` and `WarpFacesBack` since I've created this one, so it probably doesn't work anymore. Needs more testing and more work.
 
 ## Installation
-You will need [ComfyUI-Impact-Pack](https://github.com/ltdrdata/) for `Load InsightFace` node and [comfyui_controlnet_aux](https://github.com/Fannovel16/comfyui_controlnet_aux) for MediaPipe library (which is required for convex_hull masks) and `MediaPipe Face Mesh` node if you want to use that controlnet.
-You will also need to download the [BiSeNet model](https://drive.google.com/open?id=154JgKpzCPW82qINcVieuPH3fZ2e0P812) and save it in `ComfyUI/models/bisenet` to use occlusion aware masks.
+- Download [bluefoxcreation/FaceAlignment](https://huggingface.co/bluefoxcreation/FaceAlignment) model into `ComfyUI/models/landmarks`
+- (Only if you want to use occlusion aware masks) Download [BiSeNet model](https://drive.google.com/open?id=154JgKpzCPW82qINcVieuPH3fZ2e0P812) into `ComfyUI/models/bisenet`
+
+###### DEPRECATED:
+- You need [ComfyUI-Impact-Pack](https://github.com/ltdrdata/) for `Load InsightFace` node and [comfyui_controlnet_aux](https://github.com/Fannovel16/comfyui_controlnet_aux) for MediaPipe library (which is required for convex_hull masks) and `MediaPipe Face Mesh` node if you want to use that controlnet.
