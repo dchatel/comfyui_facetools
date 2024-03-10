@@ -94,7 +94,6 @@ class Face:
 def detect_faces(img, threshold):
     dets = Models.yolo((img[None] / 255).permute(0,3,1,2), threshold)
     boxes = (dets.boxes.xyxy.reshape(-1,2,2)).reshape(-1,4)
-    a,b,c,d = [int(x) for x in boxes[0]]
     faces = []
     for (a,b,c,d), box in zip(boxes.type(torch.int).cpu().numpy(), dets.boxes):
         cx, cy = (a+c)/2, (b+d)/2
