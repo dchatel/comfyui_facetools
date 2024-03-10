@@ -43,9 +43,9 @@ def get_submatrix_with_padding(img, a, b, c, d):
     pb = -min(img.shape[0] - d, 0)
     a, b, c, d = max(a, 0), max(b, 0), min(c, img.shape[1]), min(d, img.shape[0])
 
-    submatrix = img[b:d, a:c]
+    submatrix = img[b:d, a:c].permute(2,0,1)
     pad = tv.transforms.Pad((pl, pt, pr, pb))
-    submatrix = pad(submatrix)
+    submatrix = pad(submatrix).permute(1,2,0)
     
     return submatrix
 
