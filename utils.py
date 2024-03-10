@@ -10,7 +10,13 @@ from folder_paths import models_dir
 from .BiSeNet import BiSeNet
 from ultralytics import YOLO
 from onnxruntime import InferenceSession
-from collections import namedtuple
+
+def pad_to_stride(image, stride=32):
+    h, w, _ = image.shape
+    pr = (stride - w % stride) % stride
+    pb = (stride - h % stride) % stride
+    padded_image = tv.transforms.transforms.F.pad(image.permute(2,0,1), (0, 0, pr, pb)).permute(1,2,0)
+    return padded_image
 
 def resize(img, size):
     h, w, _ = img.shape
@@ -92,6 +98,7 @@ class Face:
         return N, crop
 
 def detect_faces(img, threshold):
+    img = pad_to_stride(img, stride=32)
     dets = Models.yolo((img[None] / 255).permute(0,3,1,2), threshold)
     boxes = (dets.boxes.xyxy.reshape(-1,2,2)).reshape(-1,4)
     faces = []
