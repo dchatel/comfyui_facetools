@@ -230,7 +230,6 @@ class WarpFaceBack:
                 result = image
             else:
                 values = groups[i]
-                image = values[0][0]
                 crop, mask, warp = list(zip(*[x[1:] for x in values]))
                 warped_masks = [cv2.warpAffine(single_mask.numpy(),
                                 cv2.invertAffineTransform(single_warp),
@@ -245,7 +244,7 @@ class WarpFaceBack:
                     for single_crop, single_mask, single_warp in zip(crop, warped_masks, warp)
                 ], axis=0) / np.maximum(1, full_mask)
                 full_mask = np.minimum(1, full_mask)
-                result = (swapped + (1 - full_mask) * image.numpy() / 255)
+                result = (swapped + (1 - full_mask) * image.numpy())
                 result = torch.from_numpy(result)
             results.append(result)
 
