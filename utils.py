@@ -94,8 +94,9 @@ class Face:
         T4 = np.array([[1, 0, cx], [0, 1, cy], [0, 0, 1]])
         N = N @ T4 @ S @ T3
         crop = cv2.warpAffine(self.image.numpy(), N, (size, size))
+        maskedcrop = cv2.warpAffine(self.img.numpy(), N, (size, size))
         
-        return N, crop
+        return N, crop, maskedcrop
 
 def detect_faces(img, threshold):
     img = pad_to_stride(img, stride=32)

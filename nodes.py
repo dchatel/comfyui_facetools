@@ -166,8 +166,8 @@ class CropFaces:
         masks = []
         warps = []
         for face in faces:
-            M, crop = face.crop(crop_size, crop_factor)
-            mask = mask_crop(face, M, crop*255, mask_type)
+            M, crop, maskedcrop = face.crop(crop_size, crop_factor)
+            mask = mask_crop(face, M, maskedcrop, mask_type)
             crops.append(np.array(crop))
             masks.append(np.array(mask))
             warps.append(M)
@@ -228,13 +228,13 @@ class WarpFaceBack:
     def run(self, images, face, crop, mask, warp):
         groups = defaultdict(list)
         for f,c,m,w in zip(face, crop, mask, warp):
-            gray = cv2.cvtColor(c.numpy(), cv2.COLOR_RGB2GRAY)
-            _, gray = cv2.threshold(gray, 0.01, 1, cv2.THRESH_BINARY)
-            gray = gray.astype(np.uint8)
-            cnts, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-            largeCnts = list(filter(lambda x: cv2.contourArea(x) > 10000, cnts))
-            gray = cv2.drawContours(gray, largeCnts, -1, 1, -1)
-            m *= torch.from_numpy(gray)
+            # gray = cv2.cvtColor(c.numpy(), cv2.COLOR_RGB2GRAY)
+            # _, gray = cv2.threshold(gray, 0.01, 1, cv2.THRESH_BINARY)
+            # gray = gray.astype(np.uint8)
+            # cnts, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            # largeCnts = list(filter(lambda x: cv2.contourArea(x) > 10000, cnts))
+            # gray = cv2.drawContours(gray, largeCnts, -1, 1, -1)
+            # m *= torch.from_numpy(gray)
             groups[f.image_idx].append((f.image,c,m,w))
 
         results = []
