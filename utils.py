@@ -93,7 +93,7 @@ class Face:
         T3 = np.array([[1, 0, -cx], [0, 1, -cy], [0, 0, 1]])
         T4 = np.array([[1, 0, cx], [0, 1, cy], [0, 0, 1]])
         N = N @ T4 @ S @ T3
-        crop = cv2.warpAffine(self.img.numpy(), N, (size, size))
+        crop = cv2.warpAffine(self.image.numpy(), N, (size, size))
         
         return N, crop
 

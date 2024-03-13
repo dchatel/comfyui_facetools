@@ -106,6 +106,9 @@ class DetectFaces:
                 'threshold': ('FLOAT', {'default': 0.5, 'min': 0.0, 'max': 1.0, 'step': 0.01}),
                 'min_size': ('INT', {'default': 64, 'max': 512, 'step': 8}),
                 'max_size': ('INT', {'default': 512, 'min': 512, 'step': 8}),
+            },
+            'optional': {
+                'mask': ('MASK',),
             }
         }
     
@@ -114,10 +117,13 @@ class DetectFaces:
     FUNCTION = 'run'
     CATEGORY = 'facetools'
 
-    def run(self, image, threshold, min_size, max_size):
+    def run(self, image, threshold, min_size, max_size, mask=None):
         faces = []
-        images = (image * 255).type(torch.uint8)
-        for i, img in enumerate(images):
+        masked = image
+        if mask is not None:
+            masked = image * tv.transforms.functional.resize(1-mask, image.shape[1:3])[..., None]
+        masked = (masked * 255).type(torch.uint8)
+        for i, img in enumerate(masked):
             unfiltered_faces = detect_faces(img, threshold)
             for face in unfiltered_faces:
                 a, b, c, d = face.bbox
@@ -125,7 +131,7 @@ class DetectFaces:
                 w = abs(c-a)
                 if (h <= max_size or w <= max_size) and (min_size <= h or min_size <= w):
                     face.image_idx = i
-                    face.image = img
+                    face.image = image[i]
                     faces.append(face)
         return (faces,)
 
@@ -161,8 +167,8 @@ class CropFaces:
         warps = []
         for face in faces:
             M, crop = face.crop(crop_size, crop_factor)
-            mask = mask_crop(face, M, crop, mask_type)
-            crops.append(np.array(crop) / 255)
+            mask = mask_crop(face, M, crop*255, mask_type)
+            crops.append(np.array(crop))
             masks.append(np.array(mask))
             warps.append(M)
         crops = torch.from_numpy(np.array(crops)).type(torch.float32)
@@ -222,6 +228,13 @@ class WarpFaceBack:
     def run(self, images, face, crop, mask, warp):
         groups = defaultdict(list)
         for f,c,m,w in zip(face, crop, mask, warp):
+            gray = cv2.cvtColor(c.numpy(), cv2.COLOR_RGB2GRAY)
+            _, gray = cv2.threshold(gray, 0.01, 1, cv2.THRESH_BINARY)
+            gray = gray.astype(np.uint8)
+            cnts, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            largeCnts = list(filter(lambda x: cv2.contourArea(x) > 10000, cnts))
+            gray = cv2.drawContours(gray, largeCnts, -1, 1, -1)
+            m *= torch.from_numpy(gray)
             groups[f.image_idx].append((f.image,c,m,w))
 
         results = []
