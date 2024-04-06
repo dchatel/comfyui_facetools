@@ -202,6 +202,7 @@ def get_face_mesh(crop):
 
 def mask_simple_square(face, M, crop):
     # rotated bbox and size
+    h,w = crop.shape[:2]
     a,b,c,d = face.bbox
     rect = np.array([
         [a,b,1],
@@ -211,15 +212,16 @@ def mask_simple_square(face, M, crop):
     ]) @ M.T
     lx, ly = [int(x) for x in np.min(rect, axis=0)]
     hx, hy = [int(x) for x in np.max(rect, axis=0)]
-    mask = np.zeros((512,512), dtype=np.float32)
+    mask = np.zeros((h,w), dtype=np.float32)
     mask = cv2.rectangle(mask, (lx,ly), (hx,hy), 1, -1)
     return mask
 
 def mask_convex_hull(face, M, crop):
+    h,w = crop.shape[:2]
     points = get_face_mesh(crop)
     if points is None: return mask_simple_square(face, M, crop)
     hull = ConvexHull(points)
-    mask = np.zeros((512,512), dtype=np.int32)
+    mask = np.zeros((h,w), dtype=np.int32)
     cv2.fillPoly(mask, [points[hull.vertices,:]], color=1)
     mask = mask.astype(np.float32)
     return mask

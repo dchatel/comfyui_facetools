@@ -57,45 +57,45 @@ class OrderedFaceFilter:
         rest = sorted_faces[:take_start] + sorted_faces[take_start+take_count:]
         return (filtered, rest)
 
-class FaceDetailsDEPRECATED:
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            'required': {
-                'faces': ('FACE',),
-                'crop_size': ('INT', {'default': 512, 'min': 512, 'max': 1024, 'step': 128}),
-                'crop_factor': ('FLOAT', {'default': 1.5, 'min': 1.0, 'max': 3, 'step': 0.1}),
-                'mask_type': (mask_types,)
-            }
-        }
+# class FaceDetailsDEPRECATED:
+#     @classmethod
+#     def INPUT_TYPES(cls):
+#         return {
+#             'required': {
+#                 'faces': ('FACE',),
+#                 'crop_size': ('INT', {'default': 512, 'min': 512, 'max': 1024, 'step': 128}),
+#                 'crop_factor': ('FLOAT', {'default': 1.5, 'min': 1.0, 'max': 3, 'step': 0.1}),
+#                 'mask_type': (mask_types,)
+#             }
+#         }
     
-    RETURN_TYPES = ('IMAGE', 'MASK', 'WARP')
-    RETURN_NAMES = ('crops', 'masks', 'warps')
-    FUNCTION = 'run'
-    CATEGORY = 'facetools'
+#     RETURN_TYPES = ('IMAGE', 'MASK', 'WARP')
+#     RETURN_NAMES = ('crops', 'masks', 'warps')
+#     FUNCTION = 'run'
+#     CATEGORY = 'facetools'
 
-    def run(self, faces, crop_size, crop_factor, mask_type):
-        if len(faces) == 0:
-            empty_crop = torch.zeros((1,512,512,3))
-            empty_mask = torch.zeros((1,512,512))
-            empty_warp = np.array([
-                [1,0,-512],
-                [0,1,-512],
-            ], dtype=np.float32)
-            return (empty_crop, empty_mask, [empty_warp])
+#     def run(self, faces, crop_size, crop_factor, mask_type):
+#         if len(faces) == 0:
+#             empty_crop = torch.zeros((1,512,512,3))
+#             empty_mask = torch.zeros((1,512,512))
+#             empty_warp = np.array([
+#                 [1,0,-512],
+#                 [0,1,-512],
+#             ], dtype=np.float32)
+#             return (empty_crop, empty_mask, [empty_warp])
         
-        crops = []
-        masks = []
-        warps = []
-        for face in faces:
-            M, crop = crop_faces(face.image, face, crop_size, crop_factor)
-            mask = mask_crop(face, M, crop, mask_type)
-            crops.append(np.array(crop) / 255)
-            masks.append(np.array(mask))
-            warps.append(M)
-        crops = torch.from_numpy(np.array(crops)).type(torch.float32)
-        masks = torch.from_numpy(np.array(masks)).type(torch.float32)
-        return (crops, masks, warps)
+#         crops = []
+#         masks = []
+#         warps = []
+#         for face in faces:
+#             M, crop = crop_faces(face.image, face, crop_size, crop_factor)
+#             mask = mask_crop(face, M, crop, mask_type)
+#             crops.append(np.array(crop) / 255)
+#             masks.append(np.array(mask))
+#             warps.append(M)
+#         crops = torch.from_numpy(np.array(crops)).type(torch.float32)
+#         masks = torch.from_numpy(np.array(masks)).type(torch.float32)
+#         return (crops, masks, warps)
 
 class DetectFaces:
     @classmethod
@@ -175,38 +175,38 @@ class CropFaces:
         masks = torch.from_numpy(np.array(masks)).type(torch.float32)
         return (crops, masks, warps)
 
-class AlignFacesDEPRECATED:
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            'required': {
-                'insightface': ('INSIGHTFACE',),
-                'image': ('IMAGE',),
-                'threshold': ('FLOAT', {'default': 0.5, 'min': 0.5, 'max': 1.0, 'step': 0.01}),
-                'min_size': ('INT', {'default': 64, 'max': 512, 'step': 8}),
-                'max_size': ('INT', {'default': 512, 'min': 512, 'step': 8}),
-            }
-        }
+# class AlignFacesDEPRECATED:
+#     @classmethod
+#     def INPUT_TYPES(cls):
+#         return {
+#             'required': {
+#                 'insightface': ('INSIGHTFACE',),
+#                 'image': ('IMAGE',),
+#                 'threshold': ('FLOAT', {'default': 0.5, 'min': 0.5, 'max': 1.0, 'step': 0.01}),
+#                 'min_size': ('INT', {'default': 64, 'max': 512, 'step': 8}),
+#                 'max_size': ('INT', {'default': 512, 'min': 512, 'step': 8}),
+#             }
+#         }
     
-    RETURN_TYPES = ('FACE',)
-    RETURN_NAMES = ('faces',)
-    FUNCTION = 'run'
-    CATEGORY = 'facetools'
+#     RETURN_TYPES = ('FACE',)
+#     RETURN_NAMES = ('faces',)
+#     FUNCTION = 'run'
+#     CATEGORY = 'facetools'
 
-    def run(self, insightface, image, threshold, min_size, max_size):
-        faces = []
-        images = (image * 255).type(torch.uint8).numpy()
-        for i, img in enumerate(images):
-            unfiltered_faces = get_faces(img, insightface)
-            for face in unfiltered_faces:
-                a, b, c, d = face.bbox
-                h = abs(d-b)
-                w = abs(c-a)
-                if face.det_score >= threshold and (h <= max_size or w <= max_size) and (min_size <= h or min_size <= w):
-                    face.image_idx = i
-                    face.image = img
-                    faces.append(face)
-        return (faces,)
+#     def run(self, insightface, image, threshold, min_size, max_size):
+#         faces = []
+#         images = (image * 255).type(torch.uint8).numpy()
+#         for i, img in enumerate(images):
+#             unfiltered_faces = get_faces(img, insightface)
+#             for face in unfiltered_faces:
+#                 a, b, c, d = face.bbox
+#                 h = abs(d-b)
+#                 w = abs(c-a)
+#                 if face.det_score >= threshold and (h <= max_size or w <= max_size) and (min_size <= h or min_size <= w):
+#                     face.image_idx = i
+#                     face.image = img
+#                     faces.append(face)
+#         return (faces,)
     
 class WarpFaceBack:
     RETURN_TYPES = ('IMAGE',)
@@ -291,9 +291,9 @@ class MergeWarps:
 NODE_CLASS_MAPPINGS = {
     'DetectFaces': DetectFaces,
     'CropFaces': CropFaces,
-    'AlignFaces': AlignFacesDEPRECATED,
+    # 'AlignFaces': AlignFacesDEPRECATED,
     'WarpFacesBack': WarpFaceBack,
-    'FaceDetails': FaceDetailsDEPRECATED,
+    # 'FaceDetails': FaceDetailsDEPRECATED,
     'MergeWarps': MergeWarps,
     'GenderFaceFilter': GenderFaceFilter,
     'OrderedFaceFilter': OrderedFaceFilter,
@@ -302,9 +302,9 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     'DetectFaces': 'DetectFaces',
     'CropFaces': 'CropFaces',
-    'AlignFaces': 'Align Faces (DEPRECATED)',
+    # 'AlignFaces': 'Align Faces (DEPRECATED)',
     'WarpFacesBack': 'Warp Faces Back',
-    'FaceDetails': 'Face Details (DEPRECATED)',
+    # 'FaceDetails': 'Face Details (DEPRECATED)',
     'MergeWarps': 'Merge Warps',
     'GenderFaceFilter': 'Gender Face Filter',
     'OrderedFaceFilter': 'Ordered Face Filter',
