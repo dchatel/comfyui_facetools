@@ -11,6 +11,8 @@ These custom nodes provide a rotation aware face extraction, paste back, and var
 - Full inpainting workflow with two controlnets which allows to get as high as 1.0 denoise strength without messing things up.
 ![Full Inpainting](examples/full_inpainting.png)
 
+![JSON workflow](examples/full_inpainting.json)
+
 ## Nodes
 - `AlignFaces`
   - inputs:
