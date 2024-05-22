@@ -5,6 +5,7 @@ These custom nodes provide a rotation aware face extraction, paste back, and var
 ![Comparison](examples/comparison.jpg)
 
 ## Patch notes
+- 2024-05-22 - Updated GenderFaceFilter node.
 - 2024-05-19 - Added BiSeNetMask and JonathandinuMask nodes. Careful about JonathandinuMask, it's more accurate than BiSeNet, but it takes more memory; you can get out of memory more easily with it.
 - 2024-03-10 - Added nodes to detect faces using `face_yolov8m` instead of `insightface`.
 

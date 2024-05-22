@@ -96,9 +96,8 @@ class Face:
         N = N @ T4 @ S @ T3
         crop = cv2.warpAffine(self.img.numpy(), N, (size, size))
         crop = torch.from_numpy(crop)[None]
-        # maskedcrop = cv2.warpAffine(self.img.numpy(), N, (size, size))
         
-        return N, crop#, maskedcrop
+        return N, crop
 
 def detect_faces(img, threshold):
     img = pad_to_stride(img, stride=32)

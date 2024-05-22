@@ -1,6 +1,7 @@
 import torch
 from collections import defaultdict
 from .utils import *
+from transformers import pipeline
 
 class GenderFaceFilter:
     @classmethod
@@ -8,7 +9,7 @@ class GenderFaceFilter:
         return {
             'required': {
                 'faces': ('FACE',),
-                'gender': (['male', 'female'],)
+                'gender': (['man', 'woman'],)
             }
         }
     
@@ -18,11 +19,16 @@ class GenderFaceFilter:
     CATEGORY = 'facetools'
 
     def run(self, faces, gender):
-        gid = 0 if gender == 'female' else 1
         filtered = []
         rest = []
+        pipe = pipeline('image-classification', model='dima806/man_woman_face_image_detection', device=0)
         for face in faces:
-            if face.gender == gid:
+            _, im = face.crop(224, 1.2)
+            im = im.permute(0,3,1,2)[0]
+            im = tv.transforms.functional.resize(im, (224,224))
+            r = pipe(tv.transforms.functional.to_pil_image(im))
+            idx = np.argmax([i['score'] for i in r])
+            if r[idx]['label'] == gender:
                 filtered.append(face)
             else:
                 rest.append(face)
