@@ -180,7 +180,7 @@ def mask_BiSeNet(crop,
         model_path = os.path.join(models_dir, 'bisenet', '79999_iter.pth')
         bisenet.load_state_dict(torch.load(model_path))
         bisenet.eval()
-        crop_t = crop.permute(0,3,1,2).cuda()
+        crop_t = crop.permute(0,3,1,2).cuda().float()
         segms_t = bisenet(crop_t)[0].argmax(1).float()
         
     dic = {
