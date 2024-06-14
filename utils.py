@@ -3,7 +3,6 @@ import torch
 import torchvision as tv
 import numpy as np
 import cv2
-from insightface.utils import face_align
 import mediapipe as mp
 from scipy.spatial import ConvexHull
 from folder_paths import models_dir
@@ -11,6 +10,29 @@ from .BiSeNet import BiSeNet
 from ultralytics import YOLO
 from onnxruntime import InferenceSession
 from transformers import SegformerImageProcessor, SegformerForSemanticSegmentation
+from skimage import transform as trans
+
+
+arcface_dst = np.array(
+    [[38.2946, 51.6963], [73.5318, 51.5014], [56.0252, 71.7366],
+     [41.5493, 92.3655], [70.7299, 92.2041]],
+    dtype=np.float32)
+
+def estimate_norm(lmk, image_size=112,mode='arcface'):
+    assert lmk.shape == (5, 2)
+    assert image_size%112==0 or image_size%128==0
+    if image_size%112==0:
+        ratio = float(image_size)/112.0
+        diff_x = 0
+    else:
+        ratio = float(image_size)/128.0
+        diff_x = 8.0*ratio
+    dst = arcface_dst * ratio
+    dst[:,0] += diff_x
+    tform = trans.SimilarityTransform()
+    tform.estimate(lmk, dst)
+    M = tform.params[0:2, :]
+    return M
 
 def pad_to_stride(image, stride=32):
     h, w, _ = image.shape
@@ -88,7 +110,7 @@ class Face:
     
     def crop(self, size, crop_factor):
         S = np.array([[1/crop_factor, 0, 0], [0, 1/crop_factor, 0], [0, 0, 1]])
-        M = face_align.estimate_norm(self.kps, size)
+        M = estimate_norm(self.kps, size)
         N = M @ self.R @ self.T2
         cx, cy = np.array((size/2, size/2, 1)) @ cv2.invertAffineTransform(M @ self.R @ self.T2).T
         T3 = np.array([[1, 0, -cx], [0, 1, -cy], [0, 0, 1]])
