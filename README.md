@@ -5,6 +5,7 @@ These custom nodes provide a rotation aware face extraction, paste back, and var
 ![Comparison](examples/comparison.jpg)
 
 ## Patch notes
+- 2024-06-14 - Sent yolo to cuda device if available (credits: kilroythethird, thanks for the suggestion!)
 - 2024-06-14 - Dropped the requirement from insightface completely.
 - 2024-05-22 - Updated GenderFaceFilter node.
 - 2024-05-19 - Added BiSeNetMask and JonathandinuMask nodes. Careful about JonathandinuMask, it's more accurate than BiSeNet, but it takes more memory; you can get out of memory more easily with it.

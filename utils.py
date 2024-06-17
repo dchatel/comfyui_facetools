@@ -56,6 +56,8 @@ class Models:
     def yolo(cls, img, threshold):
         if '_yolo' not in cls.__dict__:
             cls._yolo = YOLO(os.path.join(models_dir,'ultralytics','bbox','face_yolov8m.pt'))
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            cls._yolo = cls._yolo.to(device)
         dets = cls._yolo(img, conf=threshold)[0]
         return dets
     @classmethod
