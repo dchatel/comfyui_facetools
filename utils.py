@@ -8,10 +8,9 @@ from scipy.spatial import ConvexHull
 from folder_paths import models_dir
 from .BiSeNet import BiSeNet
 from ultralytics import YOLO
-from onnxruntime import InferenceSession
+from onnxruntime import InferenceSession, get_available_providers
 from transformers import SegformerImageProcessor, SegformerForSemanticSegmentation
 from skimage import transform as trans
-
 
 arcface_dst = np.array(
     [[38.2946, 51.6963], [73.5318, 51.5014], [56.0252, 71.7366],
@@ -63,7 +62,7 @@ class Models:
     @classmethod
     def lmk(cls, crop):
         if '_lmk' not in cls.__dict__:
-            cls._lmk = InferenceSession(os.path.join(models_dir, 'landmarks', 'fan2_68_landmark.onnx'))
+            cls._lmk = InferenceSession(os.path.join(models_dir, 'landmarks', 'fan2_68_landmark.onnx'), providers=get_available_providers())
         lmk = cls._lmk.run(None, {'input': crop})[0]
         return lmk
 

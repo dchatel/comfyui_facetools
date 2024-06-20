@@ -5,6 +5,7 @@ These custom nodes provide a rotation aware face extraction, paste back, and var
 ![Comparison](examples/comparison.jpg)
 
 ## Patch notes
+- 2024-06-20 - fixed issue [13](https://github.com/dchatel/comfyui_facetools/issues/13)
 - 2024-06-14 - Sent yolo to cuda device if available (credits: kilroythethird, thanks for the suggestion!)
 - 2024-06-14 - Dropped the requirement from insightface completely.
 - 2024-05-22 - Updated GenderFaceFilter node.
