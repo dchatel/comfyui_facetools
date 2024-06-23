@@ -110,6 +110,9 @@ class CropFaces:
                 'crop_size': ('INT', {'default': 512, 'min': 512, 'max': 1024, 'step': 128}),
                 'crop_factor': ('FLOAT', {'default': 1.5, 'min': 1.0, 'max': 3, 'step': 0.1}),
                 'mask_type': (mask_types,)
+            },
+            'optional': {
+                'image_override': ('IMAGE',),
             }
         }
     
@@ -118,7 +121,7 @@ class CropFaces:
     FUNCTION = 'run'
     CATEGORY = 'facetools'
 
-    def run(self, faces, crop_size, crop_factor, mask_type):
+    def run(self, faces, crop_size, crop_factor, mask_type, image_override=None):
         if len(faces) == 0:
             empty_crop = torch.zeros((1,512,512,3))
             empty_mask = torch.zeros((1,512,512))
@@ -132,7 +135,7 @@ class CropFaces:
         masks = []
         warps = []
         for face in faces:
-            M, crop = face.crop(crop_size, crop_factor)
+            M, crop = face.crop(crop_size, crop_factor, image_override)
             mask = mask_crop(face, M, crop, mask_type)
             crops.append(np.array(crop[0]))
             masks.append(np.array(mask[0]))

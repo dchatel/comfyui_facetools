@@ -109,7 +109,7 @@ class Face:
         rot = cv2.getRotationMatrix2D((128*s,128*s), 90*i, 1)
         self.R = np.vstack((rot, np.array((0,0,1))))
     
-    def crop(self, size, crop_factor):
+    def crop(self, size, crop_factor, image_override=None):
         S = np.array([[1/crop_factor, 0, 0], [0, 1/crop_factor, 0], [0, 0, 1]])
         M = estimate_norm(self.kps, size)
         N = M @ self.R @ self.T2
@@ -117,7 +117,8 @@ class Face:
         T3 = np.array([[1, 0, -cx], [0, 1, -cy], [0, 0, 1]])
         T4 = np.array([[1, 0, cx], [0, 1, cy], [0, 0, 1]])
         N = N @ T4 @ S @ T3
-        crop = cv2.warpAffine(self.img.numpy(), N, (size, size))
+        img = self.img if image_override is None else image_override.squeeze()
+        crop = cv2.warpAffine(img.numpy(), N, (size, size))
         crop = torch.from_numpy(crop)[None]
         
         return N, crop
