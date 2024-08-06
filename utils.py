@@ -97,6 +97,8 @@ class Face:
                 i = curr_i
         
         self.bbox = (a,b,c,d)
+        self.w = c - a
+        self.h = d - b
         self.confidence = best_score
         
         self.kps = np.vstack([
