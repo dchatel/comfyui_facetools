@@ -106,7 +106,7 @@ class Face:
             lmk[0,[43,44,46,47],:2].mean(axis=0),
             lmk[0,[30,48,54],:2]
         ]) * 4 * s
-
+        
         self.T2 = np.array([[1, 0, -a], [0, 1, -b], [0, 0, 1]])
         rot = cv2.getRotationMatrix2D((128*s,128*s), 90*i, 1)
         self.R = np.vstack((rot, np.array((0,0,1))))
@@ -135,8 +135,10 @@ def detect_faces(img, threshold):
         
         a,b,c,d = [int(x) for x in (cx - r, cy - r, cx + r, cy + r)]        
         face = Face(img, a, b, c, d)
-
-        faces.append(face)
+        
+        M = estimate_norm(face.kps, 512)
+        if abs(M[0,0]) > 1 and abs(M[1,1]) > 1:
+            faces.append(face)
     return faces
 
 def get_face_mesh(crop: torch.Tensor):
