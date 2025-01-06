@@ -136,9 +136,7 @@ def detect_faces(img, threshold):
         a,b,c,d = [int(x) for x in (cx - r, cy - r, cx + r, cy + r)]        
         face = Face(img, a, b, c, d)
         
-        M = estimate_norm(face.kps, 512)
-        if abs(M[0,0]) > 1 and abs(M[1,1]) > 1:
-            faces.append(face)
+        faces.append(face)
     return faces
 
 def get_face_mesh(crop: torch.Tensor):
