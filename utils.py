@@ -121,6 +121,7 @@ class Face:
         N = N @ T4 @ S @ T3
         crop = cv2.warpAffine(self.img.numpy(), N, (size, size), flags=cv2.INTER_LANCZOS4)
         crop = torch.from_numpy(crop)[None]
+        crop = torch.clip(crop, 0, 1)
         
         return N, crop
 

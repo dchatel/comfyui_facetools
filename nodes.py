@@ -170,18 +170,18 @@ class WarpFaceBack:
             else:
                 values = groups[i]
                 crop, mask, warp = list(zip(*[x[1:] for x in values]))
-                warped_masks = [cv2.warpAffine(single_mask.numpy(),
+                warped_masks = [np.clip(cv2.warpAffine(single_mask.numpy(),
                                 cv2.invertAffineTransform(single_warp),
                                 image.shape[1::-1],
-                                flags=cv2.INTER_LANCZOS4)
+                                flags=cv2.INTER_LANCZOS4), 0, 1)
                                 for single_warp, single_mask in zip(warp, mask)]
                 full_mask = np.add.reduce(warped_masks, axis=0)[...,None]
                 swapped = np.add.reduce([
-                    cv2.warpAffine(single_crop.cpu().numpy(),
+                    np.clip(cv2.warpAffine(single_crop.cpu().numpy(),
                                 cv2.invertAffineTransform(single_warp),
                                 image.shape[1::-1],
                                 flags=cv2.INTER_LANCZOS4
-                                ) * single_mask[..., None]
+                                ), 0, 1) * single_mask[..., None]
                     for single_crop, single_mask, single_warp in zip(crop, warped_masks, warp)
                 ], axis=0) / np.maximum(1, full_mask)
                 full_mask = np.minimum(1, full_mask)
