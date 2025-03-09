@@ -2,7 +2,7 @@
 name = "comfyui_facetools"
 description = "These custom nodes provide a rotation aware face extraction, paste back, and various face related masking options."
 version = "1.0.0"
-license = "LICENSE"
+license = { file = "LICENSE" }
 
 [project.urls]
 Repository = "https://github.com/dchatel/comfyui_facetools"
