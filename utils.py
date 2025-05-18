@@ -127,7 +127,13 @@ class Face:
 
 def detect_faces(img, threshold):
     img = pad_to_stride(img, stride=32)
+    original_torch_load = torch.load
+    def torch_load_wrap(*args, **kwargs):
+        kwargs['weights_only'] = False
+        return original_torch_load(*args, **kwargs)
+    torch.load = torch_load_wrap
     dets = Models.yolo((img[None] / 255).permute(0,3,1,2), threshold)
+    torch.load = original_torch_load
     boxes = (dets.boxes.xyxy.reshape(-1,2,2)).reshape(-1,4)
     faces = []
     for (a,b,c,d), box in zip(boxes.type(torch.int).cpu().numpy(), dets.boxes):
