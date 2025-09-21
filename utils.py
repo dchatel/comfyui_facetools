@@ -62,7 +62,7 @@ class Models:
     @classmethod
     def lmk(cls, crop):
         if '_lmk' not in cls.__dict__:
-            cls._lmk = InferenceSession(os.path.join(models_dir, 'landmarks', 'fan2_68_landmark.onnx'), providers=get_available_providers())
+            cls._lmk = InferenceSession(os.path.join(models_dir, 'landmarks', 'fan2_68_landmark.onnx'))
         lmk = cls._lmk.run(None, {'input': crop})[0]
         return lmk
 
